@@ -23,7 +23,6 @@
             position: relative;
         }
 
-        /* ব্যাকগ্রাউন্ড ভিডিও */
         .video-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -31,7 +30,6 @@
             filter: brightness(1.1) contrast(1.05);
         }
 
-        /* ভিডিওর ওপর হালকা ফিল্টার */
         .video-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -88,7 +86,6 @@
             background: rgba(0, 0, 0, 0.6);
         }
 
-        /* গ্রিড লেআউট */
         .links-wrapper { 
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; 
             max-height: 550px; overflow-y: auto; padding-right: 5px; text-align: left;
@@ -110,7 +107,7 @@
         .video-thumbnail {
             width: 100%; height: 150px; object-fit: cover;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1); transition: transform 0.3s ease;
-            background: #111a2e; /* লোড হওয়ার সময় ব্যাকগ্রাউন্ড কালার */
+            background: #111a2e;
         }
 
         .video-title {
@@ -131,7 +128,6 @@
 </head>
 <body>
 
-    <!-- ব্যাকগ্রাউন্ড ভিডিও -->
     <video class="video-bg" autoplay muted loop playsinline>
         <source src="bg.mp4" type="video/mp4">
     </video>
@@ -150,44 +146,39 @@
             <input type="text" id="searchBar" class="search-input" placeholder="ভিডিও খুঁজুন..." onkeyup="searchLinks()">
         </div>
 
-        <!-- জাভাস্ক্রিপ্ট অটোমেটিক এখানে লিংক কার্ডগুলো বসাবে -->
         <div class="links-wrapper" id="linksContainer"></div>
         
-        <p id="notFound" class="no-results">কোনো ভিডিও পাওয়া যায়নি!</p>
+        <p id="notFound" class="no-results">কোনো ভিডিও পাওয়া যায়নি!</p>
     </div>
 
     <script>
-        // আপনার ভিডিওর লিংকগুলো শুধু এই নিচে লিস্ট আকারে বসিয়ে দিন
+        // START_LINKS
         const videoLinks = [
             "https://xhamster.com/videos/boob-suck-of-ex-girl-11479059",
-            "https://www.wikipedia.org" // উদাহরণ হিসেবে আরেকটি সাধারণ লিংক
+            "https://www.wikipedia.org"
         ];
+        // END_LINKS
 
         const container = document.getElementById('linksContainer');
 
-        // প্রতিটি লিংকের মেটা ডেটা API থেকে ফেচ করার ফাংশন
         videoLinks.forEach(url => {
-            // কার্ডের জন্য একটি কঙ্কাল (Skeleton) তৈরি করে রাখা হচ্ছে যাতে লোড হওয়ার আগেই লেআউট ঠিক থাকে
             const card = document.createElement('a');
             card.href = url;
             card.target = "_blank";
             card.className = "link-card";
             
-            // ডিফল্ট সেটআপ
             card.innerHTML = `
                 <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500" class="video-thumbnail">
                 <div class="video-title">লোডিং...</div>
             `;
             container.appendChild(card);
 
-            // ফ্রি স্ক্র্যাপিং API ব্যবহার করে ডেটা আনা হচ্ছে
             fetch(`https://api.microlink.io?url=${encodeURIComponent(url)}`)
                 .then(res => res.json())
                 .then(response => {
                     if(response.status === 'success') {
                         const data = response.data;
                         const title = data.title || "ভিডিও লিংক";
-                        // যদি সাইটে ওজি ইমেজ থাকে তবে সেটা নেবে, না হলে স্ক্রিনশট বা ডিফল্ট ইমেজ
                         const image = (data.image && data.image.url) || (data.screenshot && data.screenshot.url) || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500";
                         
                         card.querySelector('.video-thumbnail').src = image;
@@ -201,7 +192,6 @@
                 });
         });
 
-        // লাইভ সার্চ ফাংশন
         function searchLinks() {
             const input = document.getElementById('searchBar').value.toLowerCase();
             const links = document.getElementsByClassName('link-card');
